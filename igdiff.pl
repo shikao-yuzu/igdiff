@@ -4,14 +4,15 @@ igdiff.pl
 
 =head1 DESCRIPTION
 
-特定の文字列を含む行を無視し, 2つのファイルの差分を計算する
+特定の文字列を含む行を無視して, 2つのファイルの差分を計算する
 
 =head1 USAGE
 
-perl igdiff.pl input_file1 input_file2 [ignore_file]
+perl  igdiff.pl  input_file1  input_file2  [ignore_file]
 
 [ignore_file]には改行区切りで差分計算時に無視する文字列を指定する.
-[ignore_file]では半角スペースは無視され, 先頭が#の行はコメント行になる.
+[ignore_file]では半角スペースは無視され, 先頭が"#"の行はコメントと
+して行全体が無視される.
 なお, [ignore_file]を指定しない場合は通常の差分計算になる.
 
 =cut
@@ -31,8 +32,6 @@ exit(0);
 
 sub parse_arguments
 {
-  use Pod::Usage 'pod2usage';
-
   my $argc = @ARGV;
 
   if ( $argc == 2 || $argc == 3 )
@@ -41,7 +40,13 @@ sub parse_arguments
   }
   else
   {
-    pod2usage();
+    print "Usage:\n";
+    print "    perl  igdiff.pl  input_file1  input_file2  [ignore_file]\n\n";
+    print "[ignore_file]には改行区切りで差分計算時に無視する文字列を指定する.\n";
+    print "[ignore_file]では半角スペースは無視され, 先頭が\"#\"の行はコメントと\n";
+    print "して行全体が無視される.\n";
+    print "なお, [ignore_file]を指定しない場合は通常の差分計算になる.\n";
+    exit(1);
   }
 }
 
@@ -58,10 +63,10 @@ sub set_ignore_list
   open( my $fh, '<', $ignore_file ) or die ( "Can't open file $ignore_file : $!" );
   while( my $line = <$fh> )
   {
-#   行先頭文字が"#"はコメント行
+    # 行先頭文字が"#"はコメント行
     next if ( substr( $line, 0, 1 ) eq "#" );
 
-#   末尾の改行文字と空白を削除
+    # 末尾の改行文字と空白を削除
     chomp( $line );
     my_trim( $line );
 
