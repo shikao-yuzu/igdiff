@@ -133,6 +133,6 @@ sub echo_diff_result
 sub my_trim
 {
   my $str = \shift;
-  $$str =~ s/\A\s*(.*?)\s*\z/$1/;
+  $$str =~ s/^\s*(.*?)\s*$/$1/;
   return $$str;
 }
