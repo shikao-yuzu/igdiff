@@ -1,7 +1,8 @@
 ﻿# igdiff
 
 ## Description
-特定の文字列を含む行を無視して, 2つのファイルの差分を計算する
+特定の文字列を含む行を無視して, 2つのファイルの差分を計算する.
+日本語による入出力はShift_JISに対応している.
 
 ## Usage
 perl igdiff.pl input_file1 input_file2 [ignore_file]
