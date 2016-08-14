@@ -1,23 +1,26 @@
-=head1 SCRIPT NAME
+ï»¿=head1 SCRIPT NAME
 
 igdiff.pl
 
 =head1 DESCRIPTION
 
-“Á’è‚Ì•¶š—ñ‚ğŠÜ‚Şs‚ğ–³‹‚µ‚Ä, 2‚Â‚Ìƒtƒ@ƒCƒ‹‚Ì·•ª‚ğŒvZ‚·‚é
+ç‰¹å®šã®æ–‡å­—åˆ—ã‚’å«ã‚€è¡Œã‚’ç„¡è¦–ã—ã¦, 2ã¤ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®å·®åˆ†ã‚’è¨ˆç®—ã™ã‚‹.
+æ—¥æœ¬èªã«ã‚ˆã‚‹å…¥å‡ºåŠ›ã¯Shift_JISã«å¯¾å¿œã—ã¦ã„ã‚‹.
 
 =head1 USAGE
 
-perl  igdiff.pl  input_file1  input_file2  [ignore_file]
+perl igdiff.pl input_file1 input_file2 [ignore_file]
 
-[ignore_file]‚É‚Í‰üs‹æØ‚è‚Å·•ªŒvZ‚É–³‹‚·‚é•¶š—ñ‚ğw’è‚·‚é.
-[ignore_file]‚Å‚Í”¼ŠpƒXƒy[ƒX‚Í–³‹‚³‚ê, æ“ª‚ª"#"‚Ìs‚ÍƒRƒƒ“ƒg‚Æ
-‚µ‚Äs‘S‘Ì‚ª–³‹‚³‚ê‚é.
-‚È‚¨, [ignore_file]‚ğw’è‚µ‚È‚¢ê‡‚Í’Êí‚Ì·•ªŒvZ‚É‚È‚é.
+[ignore_file]ã«ã¯æ”¹è¡ŒåŒºåˆ‡ã‚Šã§å·®åˆ†è¨ˆç®—æ™‚ã«ç„¡è¦–ã™ã‚‹æ–‡å­—åˆ—ã‚’æŒ‡å®šã™ã‚‹.
+[ignore_file]ã§ã¯åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã¯ç„¡è¦–ã•ã‚Œ, å…ˆé ­ãŒ"#"ã®è¡Œã¯ã‚³ãƒ¡ãƒ³ãƒˆã¨
+ã—ã¦è¡Œå…¨ä½“ãŒç„¡è¦–ã•ã‚Œã‚‹.
+ãªãŠ, [ignore_file]ã‚’æŒ‡å®šã—ãªã„å ´åˆã¯é€šå¸¸ã®å·®åˆ†è¨ˆç®—ã«ãªã‚‹.
 
 =cut
 use strict;
 use warnings;
+use utf8;
+use Encode qw/ decode encode /;
 use Text::Diff 'diff';
 
 my @files       = parse_arguments();
@@ -26,26 +29,31 @@ my @buff        = remove_ignore_line( \@files, \@ignore_list );
 my $diff        = diff( \$buff[0], \$buff[1], { STYLE => "Context" }, { CONTEXT => 3 } );
 
 echo_diff_result( $diff, @files );
-
 exit(0);
 
 
 sub parse_arguments
 {
-  my $argc = @ARGV;
+  my $argc  = @ARGV;
+  my @files = ();
 
   if ( $argc == 2 || $argc == 3 )
   {
-    return @ARGV;
+    foreach my $str ( @ARGV )
+    {
+       push( @files, decode( 'Shift_JIS', $str ) );
+    }
+    return @files;
   }
   else
   {
-    print "Usage:\n";
-    print "    perl  igdiff.pl  input_file1  input_file2  [ignore_file]\n\n";
-    print "[ignore_file]‚É‚Í‰üs‹æØ‚è‚Å·•ªŒvZ‚É–³‹‚·‚é•¶š—ñ‚ğw’è‚·‚é.\n";
-    print "[ignore_file]‚Å‚Í”¼ŠpƒXƒy[ƒX‚Í–³‹‚³‚ê, æ“ª‚ª\"#\"‚Ìs‚ÍƒRƒƒ“ƒg‚Æ\n";
-    print "‚µ‚Äs‘S‘Ì‚ª–³‹‚³‚ê‚é.\n";
-    print "‚È‚¨, [ignore_file]‚ğw’è‚µ‚È‚¢ê‡‚Í’Êí‚Ì·•ªŒvZ‚É‚È‚é.\n";
+    my $msg = "Usage:\n"
+            . "    perl  igdiff.pl  input_file1  input_file2  [ignore_file]\n\n"
+            . "[ignore_file]ã«ã¯æ”¹è¡ŒåŒºåˆ‡ã‚Šã§å·®åˆ†è¨ˆç®—æ™‚ã«ç„¡è¦–ã™ã‚‹æ–‡å­—åˆ—ã‚’æŒ‡å®šã™ã‚‹.\n"
+            . "[ignore_file]ã§ã¯åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã¯ç„¡è¦–ã•ã‚Œ, å…ˆé ­ãŒ\"#\"ã®è¡Œã¯ã‚³ãƒ¡ãƒ³ãƒˆã¨\n"
+            . "ã—ã¦è¡Œå…¨ä½“ãŒç„¡è¦–ã•ã‚Œã‚‹.\n"
+            . "ãªãŠ, [ignore_file]ã‚’æŒ‡å®šã—ãªã„å ´åˆã¯é€šå¸¸ã®å·®åˆ†è¨ˆç®—ã«ãªã‚‹.\n";
+    print encode( 'Shift_JIS', $msg );
     exit(1);
   }
 }
@@ -55,18 +63,19 @@ sub set_ignore_list
 {
   my @files = @_;
 
+  # ç„¡è¦–ãƒ•ã‚¡ã‚¤ãƒ«ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆ
   return () if ( $#files != 2 );
 
-  my $ignore_file = $files[2];
+  my $ignore_file = encode( 'Shift_JIS', $files[2] );
   my @ignore_list = ();
 
   open( my $fh, '<', $ignore_file ) or die ( "Can't open file $ignore_file : $!" );
-  while( my $line = <$fh> )
+  while( my $line = decode( 'Shift_JIS', <$fh> ) )
   {
-    # sæ“ª•¶š‚ª"#"‚ÍƒRƒƒ“ƒgs
+    # è¡Œå…ˆé ­æ–‡å­—ãŒ"#"ã®å ´åˆã¯ã‚³ãƒ¡ãƒ³ãƒˆè¡Œã¨ã—ã¦ç„¡è¦–
     next if ( substr( $line, 0, 1 ) eq "#" );
 
-    # ––”ö‚Ì‰üs•¶š‚Æ‹ó”’‚ğíœ
+    # æœ«å°¾ã®æ”¹è¡Œæ–‡å­—ã¨å…ˆé ­ãƒ»æœ«å°¾ã®ç©ºç™½ã‚’å‰Šé™¤
     chomp( $line );
     my_trim( $line );
 
@@ -87,8 +96,8 @@ sub remove_ignore_line
   {
     my $tmp = "";
 
-    open( my $fh, '<', $file ) or die ( "Can't open file $file : $!" );
-    while( my $line = <$fh> )
+    open( my $fh, '<', encode( 'Shift_JIS', $file ) ) or die ( "Can't open file $file : $!" );
+    while( my $line = decode( 'Shift_JIS', <$fh> ) )
     {
       foreach my $ig ( @$ignore_list )
       {
@@ -111,13 +120,12 @@ sub echo_diff_result
 
   if ( length( $diff ) )
   {
-    print $diff;
+    print encode( 'Shift_JIS', $diff );
   }
   else
   {
-    print "***************\n";
-    print "ƒtƒ@ƒCƒ‹ $files[0] ‚Æƒtƒ@ƒCƒ‹ $files[1] ‚Ì‘Šˆá“_‚ÍŒŸo‚³‚ê‚Ü‚¹‚ñ‚Å‚µ‚½\n";
-    print "***************\n";
+    my $msg = "ãƒ•ã‚¡ã‚¤ãƒ« $files[0] ã¨ãƒ•ã‚¡ã‚¤ãƒ« $files[1] ã®ç›¸é•ç‚¹ã¯æ¤œå‡ºã•ã‚Œã¾ã›ã‚“ã§ã—ãŸ\n";
+    print encode( 'Shift_JIS', $msg );
   }
 }
 

@@ -1,25 +1,26 @@
-# igdiff
+﻿# igdiff
 
 ## Description
-����̕�������܂ލs�𖳎�����, 2�̃t�@�C���̍������v�Z����
+特定の文字列を含む行を無視して, 2つのファイルの差分を計算する
 
 ## Usage
-perl  igdiff.pl  input_file1  input_file2  [ignore_file]
+perl igdiff.pl input_file1 input_file2 [ignore_file]
 
-[ignore_file]�ɂ͉��s��؂�ō����v�Z���ɖ������镶������w�肷��.
+[ignore_file]には改行区切りで差分計算時に無視する文字列を指定する.
 
-[ignore_file]�ł͔��p�X�y�[�X�͖�������, �擪��"#"�̍s�̓R�����g��
-���čs�S�̂����������.
+[ignore_file]では半角スペースは無視され, 先頭が"#"の行はコメントと
+して行全体が無視される.
 
-�Ȃ�, [ignore_file]���w�肵�Ȃ��ꍇ�͒ʏ�̍����v�Z�ɂȂ�.
+なお, [ignore_file]を指定しない場合は通常の差分計算になる.
 
 ### example
 
-[ignore_file]�̓��e���ȉ��̏ꍇ�A
+[ignore_file]の内容が以下の場合、
 
          hoge
     # fuga
     piyo    
-      �Ă���
+      てすと
 
-"hoge", "piyo", "�Ă���"�̂���, �ǂꂩ����܂܂��s�������v�Z���ɖ��������.
+"hoge", "piyo", "てすと"のうち, 一つ以上の文字列が含まれる行が差分
+計算時に無視される.
